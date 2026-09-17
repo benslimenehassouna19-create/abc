@@ -1,0 +1,137 @@
+﻿<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>لوحة التحكم - Cubs Kelibia</title>
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="/" class="nb-brand">
+    <img src="/images/logo.png" class="nb-logo" alt="فرقة أشبال البساتين" style="object-fit:contain;border-radius:6px;">
+    <div class="nb-title">أشبال البساتين<span>فوج قليبية</span></div>
+  </a>
+  <ul class="nb-menu">
+    <li><a href="/pages/dashboard.html" class="active">لوحة التحكم</a></li>
+    <li><a href="/pages/jalsa.html">الجلسات</a></li>
+    <li><a href="/pages/saderat.html">الصادرات</a></li>
+    <li><a href="/pages/weridet.html">الواردات</a></li>
+    <li><a href="/pages/soudesiyet.html">السوديسيات</a></li>
+  </ul>
+  <div class="nb-actions">
+    <div id="nav-user"></div>
+    <button class="btn btn-wh btn-sm logout-btn">خروج</button>
+  </div>
+</nav>
+
+<div class="layout">
+  <aside class="sidebar">
+    <ul class="sb-nav">
+      <li class="sb-section">القائمة الرئيسية</li>
+      <li><a href="/pages/dashboard.html" class="active"><span class="sb-icon">🏠</span> لوحة التحكم</a></li>
+      <li class="sb-section">الإدارة</li>
+      <li><a href="/pages/jalsa.html"><span class="sb-icon">📋</span> محاضر الجلسات</a></li>
+      <li><a href="/pages/saderat.html"><span class="sb-icon">📤</span> الصادرات</a></li>
+      <li><a href="/pages/weridet.html"><span class="sb-icon">📥</span> الواردات</a></li>
+      <li><a href="/pages/soudesiyet.html"><span class="sb-icon">👥</span> السوديسيات</a></li>
+    </ul>
+  </aside>
+  <main class="main">
+    <div class="page">
+      <div class="page-head">
+        <h2 class="page-title">لوحة التحكم</h2>
+        <span id="welcome" style="color:#666;font-size:.9rem"></span>
+      </div>
+
+      <div class="stats-grid" id="stats-grid">
+        <div class="stat-card"><div class="stat-icon">📋</div><div class="stat-info"><h4 id="s-jalsa">...</h4><p>محاضر الجلسات</p></div></div>
+        <div class="stat-card y"><div class="stat-icon">📤</div><div class="stat-info"><h4 id="s-saderat">...</h4><p>الصادرات</p></div></div>
+        <div class="stat-card r"><div class="stat-icon">📥</div><div class="stat-info"><h4 id="s-weridet">...</h4><p>الواردات</p></div></div>
+        <div class="stat-card g"><div class="stat-icon">👥</div><div class="stat-info"><h4 id="s-souds">...</h4><p>السوديسيات</p></div></div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;margin-top:10px">
+        <div class="card">
+          <div class="card-head"><h3>🔗 روابط سريعة</h3></div>
+          <div class="card-body" style="display:flex;flex-direction:column;gap:10px">
+            <a href="/pages/jalsa.html" class="btn btn-blue">📋 إضافة محضر جلسة جديد</a>
+            <a href="/pages/saderat.html" class="btn btn-primary">📤 إضافة صادر جديد</a>
+            <a href="/pages/weridet.html" class="btn btn-green">📥 إضافة وارد جديد</a>
+            <a href="/pages/soudesiyet.html" class="btn btn-outline">👤 إضافة عضو جديد</a>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3>ℹ️ معلومات الفرقة</h3></div>
+          <div class="card-body" style="padding:0">
+
+            <!-- À PROPOS header -->
+            <div style="padding:22px 24px 0">
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+                <div style="flex:1;height:1px;background:var(--blue);opacity:.25"></div>
+                <span style="font-size:.7rem;font-weight:700;color:var(--blue);letter-spacing:2px;text-transform:uppercase">À PROPOS</span>
+                <div style="flex:1;height:1px;background:var(--blue);opacity:.25"></div>
+              </div>
+
+              <h2 style="font-size:1.4rem;font-weight:900;color:var(--text);line-height:1.4;margin-bottom:14px">
+                فرقة أشبال البساتين فوج قليبية — <span style="color:var(--blue)">صناعة قادة الغد</span>
+              </h2>
+
+              <p style="font-size:.88rem;color:#555;line-height:1.85;margin-bottom:10px">
+                منذ عام 1979 تقوم فرقة أشبال البساتين فوج قليبية بتأهيل الشباب من خلال منهج تربوي فريد. نجمع بين الحياة في الطبيعة، خدمة المجتمع، والروح الجماعية لتمكين كل شاب من اكتساب مهارات حياتية عملية للمستقبل.
+              </p>
+              <p style="font-size:.88rem;color:#555;line-height:1.85;margin-bottom:20px">
+                كشافة عصريّة: فاعلة، شاملة، ومتطلعة نحو المستقبل.
+              </p>
+            </div>
+
+            <!-- VALUES -->
+            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:0 24px 22px">
+              <div style="text-align:center;background:#f8faf8;border-radius:12px;padding:14px 8px;border:1px solid #e8f0ee">
+                <div style="font-size:1.8rem;margin-bottom:6px">🤝</div>
+                <div style="font-size:.75rem;font-weight:700;color:var(--blue)">الأخوّة</div>
+              </div>
+              <div style="text-align:center;background:#f8faf8;border-radius:12px;padding:14px 8px;border:1px solid #e8f0ee">
+                <div style="font-size:1.8rem;margin-bottom:6px">🌿</div>
+                <div style="font-size:.75rem;font-weight:700;color:var(--blue)">الطبيعة</div>
+              </div>
+              <div style="text-align:center;background:#f8faf8;border-radius:12px;padding:14px 8px;border:1px solid #e8f0ee">
+                <div style="font-size:1.8rem;margin-bottom:6px">⭐</div>
+                <div style="font-size:.75rem;font-weight:700;color:var(--blue)">الشرف</div>
+              </div>
+              <div style="text-align:center;background:#f8faf8;border-radius:12px;padding:14px 8px;border:1px solid #e8f0ee">
+                <div style="font-size:1.8rem;margin-bottom:6px">💪</div>
+                <div style="font-size:.75rem;font-weight:700;color:var(--blue)">الشجاعة</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<footer class="footer"><p>© 2024 <strong>أشبال البساتين فوج قليبية</strong> — Cubs Kelibia</p></footer>
+
+<script src="/js/app.js"></script>
+<script>
+  Auth.require();
+  const u = Auth.getUser();
+  if (u) document.getElementById('welcome').textContent = 'مرحباً، ' + u.full_name;
+
+  async function loadStats() {
+    try {
+      const [j, s, w, sd] = await Promise.all([
+        api('/jalsa'), api('/saderat'), api('/weridet'), api('/soudesiyet')
+      ]);
+      document.getElementById('s-jalsa').textContent = j?.length ?? 0;
+      document.getElementById('s-saderat').textContent = s?.length ?? 0;
+      document.getElementById('s-weridet').textContent = w?.length ?? 0;
+      document.getElementById('s-souds').textContent = sd?.length ?? 0;
+    } catch {}
+  }
+  loadStats();
+</script>
+</body>
+</html>

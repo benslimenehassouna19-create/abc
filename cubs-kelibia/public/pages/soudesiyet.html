@@ -1,0 +1,652 @@
+﻿<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>سداسياتنا - Cubs Kelibia</title>
+<link rel="stylesheet" href="/css/style.css">
+<style>
+  body { background: #0a0a0a; color: #fff; }
+
+  .page-hero {
+    padding: 40px 30px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+  }
+  .page-hero h1 {
+    font-size: 2.2rem;
+    font-weight: 900;
+    color: #fff;
+    margin-bottom: 8px;
+  }
+  .page-hero p { color: #aaa; font-size: 0.95rem; }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    gap: 6px;
+    padding: 20px 30px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .tab {
+    padding: 10px 22px;
+    border-radius: 8px 8px 0 0;
+    font-family: 'Cairo', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    background: rgba(255,255,255,0.06);
+    color: #aaa;
+    transition: all 0.2s;
+  }
+  .tab.active { background: rgba(255,255,255,0.15); color: #fff; }
+  .tab:hover { background: rgba(255,255,255,0.1); color: #fff; }
+
+  /* SDASI CARDS GRID */
+  .sdasi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 18px;
+    padding: 30px;
+  }
+
+  .sdasi-card {
+    border-radius: 16px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative;
+  }
+  .sdasi-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+  }
+
+  .sdasi-card-inner {
+    padding: 28px 24px 22px;
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+  }
+
+  /* Colors per sdasi */
+  .sdasi-red .sdasi-card-inner    { background: linear-gradient(135deg, #1a0505 0%, #3d0a0a 100%); border: 1px solid rgba(204,0,0,0.3); }
+  .sdasi-blue .sdasi-card-inner   { background: linear-gradient(135deg, #050a1a 0%, #0a1a3d 100%); border: 1px solid rgba(0,68,204,0.3); }
+  .sdasi-green .sdasi-card-inner  { background: linear-gradient(135deg, #050f05 0%, #0a2b0a 100%); border: 1px solid rgba(0,102,0,0.3); }
+  .sdasi-yellow .sdasi-card-inner { background: linear-gradient(135deg, #1a1200 0%, #3d2e00 100%); border: 1px solid rgba(201,162,39,0.3); }
+
+  .sdasi-icon-wrap {
+    width: 80px;
+    height: 80px;
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 18px;
+    position: relative;
+  }
+  .sdasi-red .sdasi-icon-wrap    { background: rgba(204,0,0,0.2); }
+  .sdasi-blue .sdasi-icon-wrap   { background: rgba(0,68,204,0.2); }
+  .sdasi-green .sdasi-icon-wrap  { background: rgba(0,102,0,0.2); }
+  .sdasi-yellow .sdasi-icon-wrap { background: rgba(201,162,39,0.2); }
+
+  .sdasi-icon {
+    width: 50px;
+    height: 50px;
+  }
+
+  .sdasi-name {
+    font-size: 1.3rem;
+    font-weight: 900;
+    margin-bottom: 8px;
+  }
+  .sdasi-red .sdasi-name    { color: #ff4444; }
+  .sdasi-blue .sdasi-name   { color: #4488ff; }
+  .sdasi-green .sdasi-name  { color: #44cc44; }
+  .sdasi-yellow .sdasi-name { color: #ffd700; }
+
+  .sdasi-meta {
+    font-size: 0.82rem;
+    color: #888;
+    margin-bottom: 16px;
+  }
+
+  .sdasi-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .sdasi-btn {
+    padding: 8px 20px;
+    border-radius: 8px;
+    font-family: 'Cairo', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .sdasi-red .sdasi-btn    { background: #CC0000; color: #fff; }
+  .sdasi-blue .sdasi-btn   { background: #0044cc; color: #fff; }
+  .sdasi-green .sdasi-btn  { background: #006600; color: #fff; }
+  .sdasi-yellow .sdasi-btn { background: #c9a227; color: #000; }
+  .sdasi-btn:hover { opacity: 0.85; transform: scale(1.03); }
+
+  .sdasi-count {
+    font-size: 0.82rem;
+    color: #666;
+  }
+
+  /* MEMBERS TABLE VIEW */
+  #members-view { display: none; }
+  #members-view.active { display: block; }
+  #cards-view.hidden { display: none; }
+
+  .back-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 30px;
+    background: none;
+    border: none;
+    color: #aaa;
+    font-family: 'Cairo', sans-serif;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+  .back-btn:hover { color: #fff; }
+
+  .members-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 30px 20px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .members-title {
+    font-size: 1.5rem;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .color-pill {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  /* Dark table */
+  .dark-table-wrap {
+    margin: 0 30px 30px;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .dark-table { width: 100%; border-collapse: collapse; }
+  .dark-table th {
+    background: rgba(255,255,255,0.06);
+    color: #aaa;
+    padding: 12px 16px;
+    text-align: right;
+    font-size: 0.82rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .dark-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    font-size: 0.88rem;
+    color: #ddd;
+  }
+  .dark-table tr:last-child td { border-bottom: none; }
+  .dark-table tr:hover td { background: rgba(255,255,255,0.03); }
+
+  .search-dark {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 8px;
+    padding: 9px 14px;
+    color: #fff;
+    font-family: 'Cairo', sans-serif;
+    font-size: 0.88rem;
+    width: 240px;
+  }
+  .search-dark::placeholder { color: #666; }
+  .search-dark:focus { outline: none; border-color: rgba(255,255,255,0.3); }
+
+  /* ADD MEMBER BTN */
+  .add-member-btn {
+    padding: 9px 20px;
+    border-radius: 8px;
+    font-family: 'Cairo', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    color: #000;
+  }
+
+  /* Stats bar */
+  .stats-bar {
+    display: flex;
+    gap: 16px;
+    padding: 0 30px 24px;
+    flex-wrap: wrap;
+  }
+  .stat-pill {
+    background: rgba(255,255,255,0.06);
+    border-radius: 10px;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .stat-pill .num { font-size: 1.4rem; font-weight: 900; }
+  .stat-pill .lbl { font-size: 0.78rem; color: #888; }
+
+  /* MODAL DARK */
+  .modal-dark .modal { background: #141414; color: #fff; }
+  .modal-dark .modal-head { background: rgba(255,255,255,0.06); border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .modal-dark .modal-head h3 { color: #fff; }
+  .modal-dark .form-label { color: #aaa; }
+  .modal-dark .form-control {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: #fff;
+  }
+  .modal-dark .form-control:focus { border-color: rgba(255,255,255,0.3); box-shadow: none; }
+  .modal-dark select.form-control option { background: #1a1a1a; }
+  .modal-dark .modal-foot { border-top: 1px solid rgba(255,255,255,0.08); background: #0e0e0e; }
+  .modal-dark .btn-outline { border-color: rgba(255,255,255,0.2); color: #aaa; }
+
+  /* Badges dark */
+  .badge-active { background: rgba(68,204,68,0.15); color: #44cc44; border-radius: 20px; padding: 3px 12px; font-size: 0.76rem; font-weight: 700; }
+  .badge-inactive { background: rgba(204,0,0,0.15); color: #ff6666; border-radius: 20px; padding: 3px 12px; font-size: 0.76rem; font-weight: 700; }
+
+  @media(max-width:768px) {
+    .sdasi-grid { grid-template-columns: 1fr; padding: 16px; }
+    .members-header { padding: 10px 16px 16px; }
+    .dark-table-wrap { margin: 0 16px 16px; }
+    .stats-bar { padding: 0 16px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <a href="/" class="nb-brand">
+    <img src="/images/logo.png" class="nb-logo" alt="فرقة أشبال البساتين" style="object-fit:contain;border-radius:6px;">
+    <div class="nb-title">أشبال البساتين<span>فوج قليبية</span></div>
+  </a>
+  <ul class="nb-menu">
+    <li><a href="/pages/dashboard.html">لوحة التحكم</a></li>
+    <li><a href="/pages/jalsa.html">الجلسات</a></li>
+    <li><a href="/pages/saderat.html">الصادرات</a></li>
+    <li><a href="/pages/weridet.html">الواردات</a></li>
+    <li><a href="/pages/soudesiyet.html" class="active">السوديسيات</a></li>
+  </ul>
+  <div class="nb-actions"><div id="nav-user"></div><button class="btn btn-wh btn-sm logout-btn">خروج</button></div>
+</nav>
+
+<!-- CARDS VIEW -->
+<div id="cards-view">
+  <div class="page-hero">
+    <h1>سداسياتنا</h1>
+    <p>كل سداسية فريق متماسك بهويته وألوانه وطوطمه.</p>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab active" onclick="setTab('all')">الكل</button>
+    <button class="tab" onclick="setTab('نشط')">نشطون</button>
+    <button class="tab" onclick="setTab('غير نشط')">غير نشطين</button>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-bar" id="stats-bar" style="margin-top:20px">
+    <div class="stat-pill"><span class="num" id="st-total" style="color:#fff">0</span><span class="lbl">إجمالي الأعضاء</span></div>
+    <div class="stat-pill"><span class="num" id="st-active" style="color:#44cc44">0</span><span class="lbl">نشطون</span></div>
+    <div class="stat-pill"><span class="num" id="st-red" style="color:#ff4444">0</span><span class="lbl">السداسي الأحمر</span></div>
+    <div class="stat-pill"><span class="num" id="st-blue" style="color:#4488ff">0</span><span class="lbl">السداسي الأزرق</span></div>
+    <div class="stat-pill"><span class="num" id="st-green" style="color:#44cc44">0</span><span class="lbl">السداسي الأخضر</span></div>
+    <div class="stat-pill"><span class="num" id="st-yellow" style="color:#ffd700">0</span><span class="lbl">السداسي الأصفر</span></div>
+  </div>
+
+  <!-- SDASI CARDS -->
+  <div class="sdasi-grid">
+
+    <!-- ROUGE -->
+    <div class="sdasi-card sdasi-red" onclick="openSdasi('أحمر','#CC0000')">
+      <div class="sdasi-card-inner">
+        <div>
+          <div class="sdasi-icon-wrap">
+            <svg class="sdasi-icon" viewBox="0 0 60 60"><polygon points="30,5 55,50 5,50" fill="#CC0000"/><polygon points="30,14 48,46 12,46" fill="#1a0505"/></svg>
+          </div>
+          <div class="sdasi-name">السداسي الأحمر</div>
+          <div class="sdasi-meta">أشبال · 7–11 سنة · 6–8 أشبال</div>
+        </div>
+        <div class="sdasi-footer">
+          <button class="sdasi-btn">السداسي الأحمر</button>
+          <span class="sdasi-count" id="cnt-أحمر">0 عضو</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- BLEU -->
+    <div class="sdasi-card sdasi-blue" onclick="openSdasi('أزرق','#0044cc')">
+      <div class="sdasi-card-inner">
+        <div>
+          <div class="sdasi-icon-wrap">
+            <svg class="sdasi-icon" viewBox="0 0 60 60"><polygon points="30,5 55,55 5,55" fill="none" stroke="#4488ff" stroke-width="4"/><polygon points="30,18 45,48 15,48" fill="#4488ff" opacity="0.6"/></svg>
+          </div>
+          <div class="sdasi-name">السداسي الأزرق</div>
+          <div class="sdasi-meta">أشبال · 7–11 سنة · 6–8 أشبال</div>
+        </div>
+        <div class="sdasi-footer">
+          <button class="sdasi-btn">السداسي الأزرق</button>
+          <span class="sdasi-count" id="cnt-أزرق">0 عضو</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- VERT -->
+    <div class="sdasi-card sdasi-green" onclick="openSdasi('أخضر','#006600')">
+      <div class="sdasi-card-inner">
+        <div>
+          <div class="sdasi-icon-wrap">
+            <svg class="sdasi-icon" viewBox="0 0 60 60"><polygon points="30,55 55,10 5,10" fill="none" stroke="#44cc44" stroke-width="4"/><polygon points="30,45 46,15 14,15" fill="#44cc44" opacity="0.6"/></svg>
+          </div>
+          <div class="sdasi-name">السداسي الأخضر</div>
+          <div class="sdasi-meta">أشبال · 7–11 سنة · 6–8 أشبال</div>
+        </div>
+        <div class="sdasi-footer">
+          <button class="sdasi-btn">السداسي الأخضر</button>
+          <span class="sdasi-count" id="cnt-أخضر">0 عضو</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- JAUNE -->
+    <div class="sdasi-card sdasi-yellow" onclick="openSdasi('أصفر','#c9a227')">
+      <div class="sdasi-card-inner">
+        <div>
+          <div class="sdasi-icon-wrap">
+            <svg class="sdasi-icon" viewBox="0 0 60 60"><polygon points="30,5 55,50 5,50" fill="#c9a227" opacity="0.8"/><polygon points="30,16 46,44 14,44" fill="#3d2e00"/></svg>
+          </div>
+          <div class="sdasi-name">السداسي الأصفر</div>
+          <div class="sdasi-meta">أشبال · 7–11 سنة · 6–8 أشبال</div>
+        </div>
+        <div class="sdasi-footer">
+          <button class="sdasi-btn">السداسي الأصفر</button>
+          <span class="sdasi-count" id="cnt-أصفر">0 عضو</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- MEMBERS VIEW -->
+<div id="members-view">
+  <button class="back-btn" onclick="backToCards()">← رجوع للسداسيات</button>
+  <div class="members-header">
+    <div class="members-title">
+      <span class="color-pill" id="sdasi-pill"></span>
+      <span id="sdasi-title">السداسي</span>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+      <input type="text" id="member-search" class="search-dark" placeholder="🔍 بحث...">
+      <button class="add-member-btn" id="add-member-btn" onclick="openModal('add-modal')">+ إضافة عضو</button>
+    </div>
+  </div>
+  <div id="alerts" style="padding:0 30px"></div>
+  <div class="dark-table-wrap">
+    <table class="dark-table">
+      <thead>
+        <tr>
+          <th>#</th><th>اللقب</th><th>الاسم</th><th>تاريخ الميلاد</th>
+          <th>الهاتف</th><th>تاريخ الانضمام</th><th>الحالة</th><th>إجراءات</th>
+        </tr>
+      </thead>
+      <tbody id="members-tbody">
+        <tr><td colspan="9" style="text-align:center;padding:30px;color:#555">جاري التحميل...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ADD MODAL -->
+<div class="modal-ov modal-dark" id="add-modal">
+  <div class="modal">
+    <div class="modal-head"><h3>👤 إضافة عضو جديد</h3><button class="modal-x" onclick="closeModal('add-modal')">✕</button></div>
+    <div class="modal-body">
+      <form id="add-form">
+        <input type="hidden" name="sdasi_color" id="add-sdasi-color">
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">اللقب *</label><input type="text" name="nom" class="form-control" required></div>
+          <div class="form-group"><label class="form-label">الاسم *</label><input type="text" name="prenom" class="form-control" required></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">تاريخ الميلاد</label><input type="date" name="date_naissance" class="form-control"></div>
+          <div class="form-group"><label class="form-label">الهاتف</label><input type="tel" name="telephone" class="form-control" placeholder="XX XXX XXX"></div>
+        </div>
+        <div class="form-group"><label class="form-label">العنوان</label><input type="text" name="adresse" class="form-control"></div>
+        <div class="form-group"><label class="form-label">تاريخ الانضمام</label><input type="date" name="date_adhesion" class="form-control"></div>
+        <div class="form-group"><label class="form-label">الحالة</label>
+          <select name="statut" class="form-control"><option>نشط</option><option>غير نشط</option></select>
+        </div>
+      </form>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" onclick="closeModal('add-modal')">إلغاء</button>
+      <button class="btn" id="add-save-btn" onclick="saveMember()" style="font-weight:700">💾 حفظ</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT MODAL -->
+<div class="modal-ov modal-dark" id="edit-modal">
+  <div class="modal">
+    <div class="modal-head"><h3>✏️ تعديل بيانات العضو</h3><button class="modal-x" onclick="closeModal('edit-modal')">✕</button></div>
+    <div class="modal-body">
+      <form id="edit-form">
+        <input type="hidden" name="id">
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">اللقب *</label><input type="text" name="nom" class="form-control" required></div>
+          <div class="form-group"><label class="form-label">الاسم *</label><input type="text" name="prenom" class="form-control" required></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">تاريخ الميلاد</label><input type="date" name="date_naissance" class="form-control"></div>
+          <div class="form-group"><label class="form-label">الهاتف</label><input type="tel" name="telephone" class="form-control"></div>
+        </div>
+        <div class="form-group"><label class="form-label">العنوان</label><input type="text" name="adresse" class="form-control"></div>
+        <div class="form-group"><label class="form-label">تاريخ الانضمام</label><input type="date" name="date_adhesion" class="form-control"></div>
+        <div class="form-group"><label class="form-label">الحالة</label>
+          <select name="statut" class="form-control"><option>نشط</option><option>غير نشط</option></select>
+        </div>
+      </form>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" onclick="closeModal('edit-modal')">إلغاء</button>
+      <button class="btn btn-blue" onclick="updateMember()">💾 تحديث</button>
+    </div>
+  </div>
+</div>
+
+<script src="/js/app.js"></script>
+<script>
+  Auth.require();
+
+  let allMembers = [];
+  let currentSdasi = '';
+  let currentColor = '';
+  let currentFilter = 'all';
+
+  const colorMap = {
+    'أحمر':  { bg: '#CC0000',  text: '#ff4444', label: 'السداسي الأحمر' },
+    'أزرق':  { bg: '#0044cc',  text: '#4488ff', label: 'السداسي الأزرق' },
+    'أخضر': { bg: '#006600',  text: '#44cc44', label: 'السداسي الأخضر' },
+    'أصفر':  { bg: '#c9a227',  text: '#ffd700', label: 'السداسي الأصفر' },
+  };
+
+  // Load all members and update counts
+  async function loadAll() {
+    try {
+      allMembers = await api('/soudesiyet') || [];
+      
+      // Stats
+      document.getElementById('st-total').textContent  = allMembers.length;
+      document.getElementById('st-active').textContent = allMembers.filter(m => m.statut === 'نشط').length;
+
+      const colors = ['أحمر', 'أزرق', 'أخضر', 'أصفر'];
+      const keys   = ['red',  'blue',  'green', 'yellow'];
+      colors.forEach((c, i) => {
+        const cnt = allMembers.filter(m => m.grade === c || m.adresse === c || String(m.telephone).includes(c) || filterBySdasi(m, c)).length;
+        const el = document.getElementById('st-' + keys[i]);
+        if (el) el.textContent = cnt;
+        const cntEl = document.getElementById('cnt-' + c);
+        if (cntEl) cntEl.textContent = cnt + ' عضو';
+      });
+    } catch(e) { console.error(e); }
+  }
+
+  function filterBySdasi(m, color) {
+    // We store sdasi color in 'adresse' field — filter by it
+    return m.sdasi === color;
+  }
+
+  function setTab(filter) {
+    currentFilter = filter;
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    event.target.classList.add('active');
+  }
+
+  function openSdasi(color, hexColor) {
+    currentSdasi = color;
+    currentColor = hexColor;
+    const info = colorMap[color];
+
+    // Update header
+    document.getElementById('sdasi-title').textContent = info.label;
+    const pill = document.getElementById('sdasi-pill');
+    pill.style.background = hexColor;
+
+    // Update add btn color
+    const addBtn = document.getElementById('add-member-btn');
+    addBtn.style.background = hexColor;
+    addBtn.style.color = color === 'أصفر' ? '#000' : '#fff';
+
+    // Update add modal hidden field
+    document.getElementById('add-sdasi-color').value = color;
+
+    // Show members view
+    document.getElementById('cards-view').classList.add('hidden');
+    document.getElementById('members-view').classList.add('active');
+
+    loadMembers(color);
+  }
+
+  function backToCards() {
+    document.getElementById('members-view').classList.remove('active');
+    document.getElementById('cards-view').classList.remove('hidden');
+    loadAll();
+  }
+
+  async function loadMembers(color) {
+    try {
+      allMembers = await api('/soudesiyet') || [];
+      const filtered = allMembers.filter(m => (m.sdasi || '') === color);
+      renderMembers(filtered);
+    } catch(e) { toast('خطأ في التحميل', 'error'); }
+  }
+
+  function renderMembers(data) {
+    const tb = document.getElementById('members-tbody');
+    if (!data.length) {
+      tb.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:40px;color:#555">
+        <div style="font-size:2.5rem;margin-bottom:10px">👥</div>
+        <div>لا يوجد أعضاء في هذه السداسية بعد</div>
+        <div style="font-size:0.8rem;margin-top:6px;color:#444">اضغط "+ إضافة عضو" لإضافة أول عضو</div>
+      </td></tr>`;
+      return;
+    }
+    tb.innerHTML = data.map((m, i) => `
+      <tr>
+        <td style="color:#555">${i+1}</td>
+        <td><strong style="color:#fff">${m.nom}</strong></td>
+        <td>${m.prenom}</td>
+        <td style="color:#888">${m.date_naissance || '-'}</td>
+        <td style="color:#888">${m.telephone || '-'}</td>
+        <td style="color:#888">${m.date_adhesion || '-'}</td>
+        <td><span class="${m.statut === 'نشط' ? 'badge-active' : 'badge-inactive'}">${m.statut}</span></td>
+        <td style="white-space:nowrap">
+          <button class="btn btn-sm" style="background:rgba(255,255,255,0.08);color:#ddd;margin-left:4px" onclick="editMember(${m.id})">✏️</button>
+          <button class="btn btn-sm btn-red" onclick="deleteMember(${m.id})">🗑️</button>
+        </td>
+      </tr>`).join('');
+  }
+
+  async function saveMember() {
+    const body = Object.fromEntries(new FormData(document.getElementById('add-form')).entries());
+    body.sdasi = body.sdasi_color;
+    delete body.sdasi_color;
+    try {
+      const d = await api('/soudesiyet', { method: 'POST', body: JSON.stringify(body) });
+      toast(d.message, 'success');
+      closeModal('add-modal');
+      loadMembers(currentSdasi);
+    } catch(e) { toast(e.message, 'error'); }
+  }
+
+  async function editMember(id) {
+    try {
+      const m = await api('/soudesiyet/' + id);
+      const form = document.getElementById('edit-form');
+      Object.keys(m).forEach(k => { const el = form.querySelector(`[name="${k}"]`); if (el) el.value = m[k] || ''; });
+      openModal('edit-modal');
+    } catch(e) { toast(e.message, 'error'); }
+  }
+
+  async function updateMember() {
+    const body = Object.fromEntries(new FormData(document.getElementById('edit-form')).entries());
+    const id = body.id; delete body.id;
+    body.sdasi = currentSdasi;
+    try {
+      const d = await api('/soudesiyet/' + id, { method: 'PUT', body: JSON.stringify(body) });
+      toast(d.message, 'success');
+      closeModal('edit-modal');
+      loadMembers(currentSdasi);
+    } catch(e) { toast(e.message, 'error'); }
+  }
+
+  async function deleteMember(id) {
+    if (!confirm('حذف هذا العضو؟')) return;
+    try {
+      await api('/soudesiyet/' + id, { method: 'DELETE' });
+      toast('تم الحذف', 'success');
+      loadMembers(currentSdasi);
+    } catch(e) { toast(e.message, 'error'); }
+  }
+
+  // Search
+  document.getElementById('member-search').addEventListener('input', function() {
+    const q = this.value.toLowerCase();
+    const filtered = allMembers.filter(m =>
+      (m.sdasi || '') === currentSdasi &&
+      (m.nom.toLowerCase().includes(q) || m.prenom.toLowerCase().includes(q))
+    );
+    renderMembers(filtered);
+  });
+
+  loadAll();
+</script>
+</body>
+</html>

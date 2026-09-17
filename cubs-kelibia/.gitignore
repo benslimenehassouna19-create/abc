@@ -1,0 +1,6 @@
+node_modules/
+cubs_kelibia.db
+.env
+*.log
+public/uploads/*
+!public/uploads/.gitkeep

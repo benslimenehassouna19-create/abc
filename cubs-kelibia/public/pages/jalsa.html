@@ -1,0 +1,246 @@
+﻿<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>محاضر الجلسات - Cubs Kelibia</title>
+<link rel="stylesheet" href="/css/style.css">
+<style>
+  .action-btns { display:flex; gap:5px; flex-wrap:nowrap; align-items:center; }
+  .btn-icon { padding:6px 10px; font-size:.82rem; border-radius:7px; white-space:nowrap; }
+  /* Copy success flash */
+  .copied { background:#006600 !important; color:#fff !important; }
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="/" class="nb-brand">
+    <img src="/images/logo.png" class="nb-logo" alt="فرقة أشبال البساتين" style="object-fit:contain;border-radius:6px;">
+    <div class="nb-title">أشبال البساتين<span>فوج قليبية</span></div>
+  </a>
+  <ul class="nb-menu">
+    <li><a href="/pages/dashboard.html">لوحة التحكم</a></li>
+    <li><a href="/pages/jalsa.html" class="active">الجلسات</a></li>
+    <li><a href="/pages/saderat.html">الصادرات</a></li>
+    <li><a href="/pages/weridet.html">الواردات</a></li>
+    <li><a href="/pages/soudesiyet.html">السوديسيات</a></li>
+  </ul>
+  <div class="nb-actions"><div id="nav-user"></div><button class="btn btn-wh btn-sm logout-btn">خروج</button></div>
+</nav>
+
+<div class="layout">
+  <aside class="sidebar">
+    <ul class="sb-nav">
+      <li class="sb-section">القائمة</li>
+      <li><a href="/pages/dashboard.html"><span class="sb-icon">🏠</span> لوحة التحكم</a></li>
+      <li><a href="/pages/jalsa.html" class="active"><span class="sb-icon">📋</span> محاضر الجلسات</a></li>
+      <li><a href="/pages/saderat.html"><span class="sb-icon">📤</span> الصادرات</a></li>
+      <li><a href="/pages/weridet.html"><span class="sb-icon">📥</span> الواردات</a></li>
+      <li><a href="/pages/soudesiyet.html"><span class="sb-icon">👥</span> السوديسيات</a></li>
+    </ul>
+  </aside>
+  <main class="main">
+    <div class="page">
+      <div class="page-head">
+        <h2 class="page-title">📋 محاضر الجلسات</h2>
+        <button class="btn btn-blue" onclick="openModal('add-modal')">+ إضافة محضر جديد</button>
+      </div>
+      <div id="alerts"></div>
+      <div class="search-row">
+        <input type="text" id="search" class="form-control" placeholder="🔍 بحث برقم أو مكان أو رئيس...">
+      </div>
+      <div class="card">
+        <div class="tbl-wrap">
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th>الرقم</th><th>التاريخ</th><th>المكان</th><th>الرئيس</th><th>أضيف بواسطة</th><th>الإجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="table-body">
+              <tr><td colspan="6" style="text-align:center;padding:30px"><div class="spinner"></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- ADD MODAL -->
+<div class="modal-ov" id="add-modal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>📋 إضافة محضر جلسة جديد</h3>
+      <button class="modal-x" onclick="closeModal('add-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <form id="add-form">
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">رقم الجلسة *</label><input type="text" name="numero" class="form-control" required placeholder="2024/01"></div>
+          <div class="form-group"><label class="form-label">التاريخ *</label><input type="date" name="date" class="form-control" required></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">المكان *</label><input type="text" name="lieu" class="form-control" required placeholder="مقر الفوج"></div>
+          <div class="form-group"><label class="form-label">رئيس الجلسة *</label><input type="text" name="president" class="form-control" required></div>
+        </div>
+        <div class="form-group"><label class="form-label">الأعضاء الحاضرون</label><textarea name="membres_presents" class="form-control" placeholder="أسماء الأعضاء الحاضرين..."></textarea></div>
+        <div class="form-group"><label class="form-label">جدول الأعمال</label><textarea name="ordre_du_jour" class="form-control" placeholder="نقاط جدول الأعمال..."></textarea></div>
+        <div class="form-group"><label class="form-label">المناقشات</label><textarea name="discussions" class="form-control" placeholder="ملخص المناقشات..."></textarea></div>
+        <div class="form-group"><label class="form-label">القرارات</label><textarea name="decisions" class="form-control" placeholder="القرارات المتخذة..."></textarea></div>
+      </form>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" onclick="closeModal('add-modal')">إلغاء</button>
+      <button class="btn btn-blue" onclick="saveJalsa()">💾 حفظ</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT MODAL -->
+<div class="modal-ov" id="edit-modal">
+  <div class="modal">
+    <div class="modal-head"><h3>✏️ تعديل محضر الجلسة</h3><button class="modal-x" onclick="closeModal('edit-modal')">✕</button></div>
+    <div class="modal-body">
+      <form id="edit-form">
+        <input type="hidden" name="id">
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">رقم الجلسة *</label><input type="text" name="numero" class="form-control" required></div>
+          <div class="form-group"><label class="form-label">التاريخ *</label><input type="date" name="date" class="form-control" required></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">المكان *</label><input type="text" name="lieu" class="form-control" required></div>
+          <div class="form-group"><label class="form-label">رئيس الجلسة *</label><input type="text" name="president" class="form-control" required></div>
+        </div>
+        <div class="form-group"><label class="form-label">الأعضاء الحاضرون</label><textarea name="membres_presents" class="form-control"></textarea></div>
+        <div class="form-group"><label class="form-label">جدول الأعمال</label><textarea name="ordre_du_jour" class="form-control"></textarea></div>
+        <div class="form-group"><label class="form-label">المناقشات</label><textarea name="discussions" class="form-control"></textarea></div>
+        <div class="form-group"><label class="form-label">القرارات</label><textarea name="decisions" class="form-control"></textarea></div>
+      </form>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" onclick="closeModal('edit-modal')">إلغاء</button>
+      <button class="btn btn-blue" onclick="updateJalsa()">💾 تحديث</button>
+    </div>
+  </div>
+</div>
+
+<!-- COPY MODAL -->
+<div class="modal-ov" id="copy-modal">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-head"><h3>📋 نسخ المحضر</h3><button class="modal-x" onclick="closeModal('copy-modal')">✕</button></div>
+    <div class="modal-body">
+      <p style="color:#555;margin-bottom:16px;font-size:.9rem">سيتم إنشاء نسخة جديدة من هذا المحضر بتاريخ جديد.</p>
+      <div class="form-group"><label class="form-label">رقم الجلسة الجديد *</label><input type="text" id="copy-numero" class="form-control" placeholder="2024/02"></div>
+      <div class="form-group"><label class="form-label">تاريخ الجلسة الجديد *</label><input type="date" id="copy-date" class="form-control"></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" onclick="closeModal('copy-modal')">إلغاء</button>
+      <button class="btn btn-blue" onclick="confirmCopy()">📋 نسخ</button>
+    </div>
+  </div>
+</div>
+
+<script src="/js/app.js"></script>
+<script>
+  Auth.require();
+  let allData = [];
+  let copySource = null;
+
+  async function load() {
+    try { allData = await api('/jalsa') || []; render(allData); }
+    catch { toast('خطأ في تحميل البيانات', 'error'); }
+  }
+
+  function render(data) {
+    const tb = document.getElementById('table-body');
+    if (!data.length) {
+      tb.innerHTML = '<tr><td colspan="6"><div class="empty"><div class="empty-icon">📋</div><p>لا توجد جلسات بعد</p></div></td></tr>';
+      return;
+    }
+    tb.innerHTML = data.map(r => `
+      <tr>
+        <td><strong>${r.numero}</strong></td>
+        <td>${r.date}</td>
+        <td>${r.lieu}</td>
+        <td>${r.president}</td>
+        <td>${r.creator || '-'}</td>
+        <td>
+          <div class="action-btns">
+            <button class="btn btn-icon btn-outline"  title="تعديل"       onclick="editJalsa(${r.id})">✏️</button>
+            <button class="btn btn-icon btn-red"      title="تحميل PDF"   onclick="exportDoc(${r.id},'pdf')">📄 PDF</button>
+            <button class="btn btn-icon btn-blue"     title="تحميل Word"  onclick="exportDoc(${r.id},'word')">📝 Word</button>
+            <button class="btn btn-icon btn-green"    title="نسخ المحضر" onclick="openCopy(${r.id})">📋 نسخ</button>
+            <button class="btn btn-icon btn-red"      title="حذف"         onclick="deleteJalsa(${r.id})">🗑️</button>
+          </div>
+        </td>
+      </tr>`).join('');
+  }
+
+  // ── COPY ──────────────────────────────────────────────
+  function openCopy(id) {
+    copySource = allData.find(r => r.id === id);
+    if (!copySource) return;
+    document.getElementById('copy-numero').value = copySource.numero + ' (نسخة)';
+    document.getElementById('copy-date').value   = new Date().toISOString().split('T')[0];
+    openModal('copy-modal');
+  }
+
+  async function confirmCopy() {
+    const numero = document.getElementById('copy-numero').value.trim();
+    const date   = document.getElementById('copy-date').value;
+    if (!numero || !date) return toast('يرجى تعبئة الرقم والتاريخ', 'error');
+    try {
+      const body = { ...copySource, numero, date };
+      delete body.id; delete body.created_at; delete body.created_by; delete body.creator;
+      const d = await api('/jalsa', { method: 'POST', body: JSON.stringify(body) });
+      toast('✅ تم نسخ المحضر بنجاح', 'success');
+      closeModal('copy-modal');
+      load();
+    } catch(e) { toast(e.message, 'error'); }
+  }
+
+  // ── SAVE ──────────────────────────────────────────────
+  async function saveJalsa() {
+    const body = Object.fromEntries(new FormData(document.getElementById('add-form')).entries());
+    try {
+      const d = await api('/jalsa', { method: 'POST', body: JSON.stringify(body) });
+      toast(d.message, 'success'); closeModal('add-modal'); load();
+    } catch(e) { toast(e.message, 'error'); }
+  }
+
+  async function editJalsa(id) {
+    try {
+      const r    = await api('/jalsa/' + id);
+      const form = document.getElementById('edit-form');
+      Object.keys(r).forEach(k => { const el = form.querySelector(`[name="${k}"]`); if (el) el.value = r[k] || ''; });
+      openModal('edit-modal');
+    } catch(e) { toast(e.message, 'error'); }
+  }
+
+  async function updateJalsa() {
+    const body = Object.fromEntries(new FormData(document.getElementById('edit-form')).entries());
+    const id   = body.id; delete body.id;
+    try {
+      const d = await api('/jalsa/' + id, { method: 'PUT', body: JSON.stringify(body) });
+      toast(d.message, 'success'); closeModal('edit-modal'); load();
+    } catch(e) { toast(e.message, 'error'); }
+  }
+
+  async function deleteJalsa(id) {
+    if (!confirm('حذف هذا المحضر؟')) return;
+    try { await api('/jalsa/' + id, { method: 'DELETE' }); toast('تم الحذف', 'success'); load(); }
+    catch(e) { toast(e.message, 'error'); }
+  }
+
+  document.getElementById('search').addEventListener('input', e => {
+    const q = e.target.value.toLowerCase();
+    render(allData.filter(r =>
+      r.numero.toLowerCase().includes(q) || r.lieu.toLowerCase().includes(q) || r.president.toLowerCase().includes(q)
+    ));
+  });
+
+  load();
+</script>
+</body>
+</html>

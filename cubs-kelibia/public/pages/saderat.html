@@ -1,0 +1,486 @@
+﻿<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>الصادرات - Cubs Kelibia</title>
+<link rel="stylesheet" href="/css/style.css">
+<style>
+  /* File upload zone */
+  .upload-zone {
+    border: 2px dashed #c9a227;
+    border-radius: 10px;
+    padding: 18px 16px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: rgba(201,162,39,0.04);
+    position: relative;
+  }
+  .upload-zone:hover, .upload-zone.dragover {
+    background: rgba(201,162,39,0.1);
+    border-color: #a8881f;
+  }
+  .upload-zone input[type="file"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+  }
+  .upload-icon { font-size: 1.8rem; margin-bottom: 6px; }
+  .upload-text { font-size: 0.88rem; color: #666; }
+  .upload-text strong { color: var(--blue); }
+
+  .file-preview {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    background: rgba(26,107,90,0.08);
+    border-radius: 8px;
+    border: 1px solid rgba(26,107,90,0.2);
+    font-size: 0.87rem;
+    margin-top: 8px;
+  }
+  .file-preview .file-icon { font-size: 1.3rem; }
+  .file-preview .file-name { flex: 1; color: var(--blue); font-weight: 600; word-break: break-all; }
+  .file-preview .remove-file {
+    background: none; border: none; color: var(--red);
+    cursor: pointer; font-size: 1rem; padding: 2px 6px;
+    border-radius: 4px; transition: background 0.2s;
+  }
+  .file-preview .remove-file:hover { background: rgba(204,0,0,0.1); }
+
+  /* Existing file badge in table */
+  .file-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 3px 10px; border-radius: 6px;
+    font-size: 0.78rem; font-weight: 700;
+    background: rgba(26,107,90,0.12);
+    color: var(--blue); cursor: pointer;
+    border: 1px solid rgba(26,107,90,0.2);
+    transition: all 0.15s;
+    text-decoration: none;
+  }
+  .file-badge:hover { background: rgba(26,107,90,0.22); }
+  .file-badge.pdf { background: rgba(204,0,0,0.1); color: #aa0000; border-color: rgba(204,0,0,0.2); }
+  .file-badge.word { background: rgba(0,68,204,0.1); color: #0044cc; border-color: rgba(0,68,204,0.2); }
+
+  /* Edit file row */
+  .edit-file-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 12px; background: #f0f7f5;
+    border-radius: 8px; border: 1px solid #c3ddd8;
+    font-size: 0.85rem; margin-bottom: 8px;
+  }
+  .edit-file-row .ef-name { flex: 1; color: var(--blue); font-weight: 600; }
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="/" class="nb-brand">
+    <img src="/images/logo.png" class="nb-logo" alt="فرقة أشبال البساتين" style="object-fit:contain;border-radius:6px;">
+    <div class="nb-title">أشبال البساتين<span>فوج قليبية</span></div>
+  </a>
+  <ul class="nb-menu">
+    <li><a href="/pages/dashboard.html">لوحة التحكم</a></li>
+    <li><a href="/pages/jalsa.html">الجلسات</a></li>
+    <li><a href="/pages/saderat.html" class="active">الصادرات</a></li>
+    <li><a href="/pages/weridet.html">الواردات</a></li>
+    <li><a href="/pages/soudesiyet.html">السوديسيات</a></li>
+  </ul>
+  <div class="nb-actions"><div id="nav-user"></div><button class="btn btn-wh btn-sm logout-btn">خروج</button></div>
+</nav>
+
+<div class="layout">
+  <aside class="sidebar">
+    <ul class="sb-nav">
+      <li class="sb-section">القائمة</li>
+      <li><a href="/pages/dashboard.html"><span class="sb-icon">🏠</span> لوحة التحكم</a></li>
+      <li><a href="/pages/jalsa.html"><span class="sb-icon">📋</span> محاضر الجلسات</a></li>
+      <li><a href="/pages/saderat.html" class="active"><span class="sb-icon">📤</span> الصادرات</a></li>
+      <li><a href="/pages/weridet.html"><span class="sb-icon">📥</span> الواردات</a></li>
+      <li><a href="/pages/soudesiyet.html"><span class="sb-icon">👥</span> السوديسيات</a></li>
+    </ul>
+  </aside>
+
+  <main class="main">
+    <div class="page">
+      <div class="page-head">
+        <h2 class="page-title">📤 الصادرات</h2>
+        <button class="btn btn-blue" onclick="openModal('add-modal')">+ إضافة صادر جديد</button>
+      </div>
+      <div id="alerts"></div>
+      <div class="search-row">
+        <input type="text" id="search" class="form-control" placeholder="🔍 بحث...">
+        <select id="filter-statut" class="form-control" style="max-width:160px">
+          <option value="">جميع الحالات</option>
+          <option value="مُرسَل">مُرسَل</option>
+          <option value="في الانتظار">في الانتظار</option>
+          <option value="مُلغى">مُلغى</option>
+        </select>
+      </div>
+      <div class="card">
+        <div class="tbl-wrap">
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th>الرقم</th><th>التاريخ</th><th>المُرسَل إليه</th>
+                <th>الموضوع</th><th>الحالة</th><th>الملف</th><th>الإجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="table-body">
+              <tr><td colspan="7" style="text-align:center;padding:30px"><div class="spinner"></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- ════════════════════════════════════════
+     ADD MODAL
+════════════════════════════════════════ -->
+<div class="modal-ov" id="add-modal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>📤 إضافة صادر جديد</h3>
+      <button class="modal-x" onclick="closeModal('add-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <!-- Use regular form — will submit as FormData -->
+      <form id="add-form" enctype="multipart/form-data">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">رقم الصادر *</label>
+            <input type="text" name="numero" class="form-control" required placeholder="2024/S01">
+          </div>
+          <div class="form-group">
+            <label class="form-label">التاريخ *</label>
+            <input type="date" name="date" class="form-control" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">المُرسَل إليه *</label>
+          <input type="text" name="destinataire" class="form-control" required placeholder="اسم الجهة أو الشخص">
+        </div>
+        <div class="form-group">
+          <label class="form-label">الموضوع *</label>
+          <input type="text" name="objet" class="form-control" required placeholder="موضوع الوثيقة">
+        </div>
+        <div class="form-group">
+          <label class="form-label">المحتوى</label>
+          <textarea name="contenu" class="form-control" placeholder="محتوى الوثيقة..."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">الحالة</label>
+          <select name="statut" class="form-control">
+            <option>مُرسَل</option><option>في الانتظار</option><option>مُلغى</option>
+          </select>
+        </div>
+
+        <!-- ── FILE UPLOAD ── -->
+        <div class="form-group">
+          <label class="form-label">📎 إرفاق ملف <span style="color:#999;font-weight:400">(PDF أو Word — اختياري)</span></label>
+          <div class="upload-zone" id="add-upload-zone">
+            <input type="file" name="attached_file" id="add-file-input"
+                   accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                   onchange="previewFile(this,'add-file-preview')">
+            <div class="upload-icon">📁</div>
+            <div class="upload-text">اسحب الملف هنا أو <strong>انقر للاختيار</strong></div>
+            <div style="font-size:0.76rem;color:#aaa;margin-top:4px">PDF أو Word — حجم أقصى 10 ميجا</div>
+          </div>
+          <div id="add-file-preview"></div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" onclick="closeModal('add-modal')">إلغاء</button>
+      <button class="btn btn-blue" onclick="saveSaderat()">💾 حفظ</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     EDIT MODAL
+════════════════════════════════════════ -->
+<div class="modal-ov" id="edit-modal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>✏️ تعديل الصادر</h3>
+      <button class="modal-x" onclick="closeModal('edit-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <form id="edit-form" enctype="multipart/form-data">
+        <input type="hidden" name="id">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">رقم الصادر *</label>
+            <input type="text" name="numero" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">التاريخ *</label>
+            <input type="date" name="date" class="form-control" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">المُرسَل إليه *</label>
+          <input type="text" name="destinataire" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">الموضوع *</label>
+          <input type="text" name="objet" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">المحتوى</label>
+          <textarea name="contenu" class="form-control"></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">الحالة</label>
+          <select name="statut" class="form-control">
+            <option>مُرسَل</option><option>في الانتظار</option><option>مُلغى</option>
+          </select>
+        </div>
+
+        <!-- ── EXISTING FILE ── -->
+        <div class="form-group" id="edit-existing-file-wrap" style="display:none">
+          <label class="form-label">📎 الملف الحالي</label>
+          <div class="edit-file-row">
+            <span id="edit-existing-file-icon">📄</span>
+            <span class="ef-name" id="edit-existing-file-name"></span>
+            <a id="edit-existing-file-link" href="#" target="_blank" class="btn btn-sm btn-green">⬇️ تحميل</a>
+            <button type="button" class="btn btn-sm btn-red" onclick="removeExistingFile()">🗑️ حذف</button>
+          </div>
+        </div>
+
+        <!-- ── NEW FILE ── -->
+        <div class="form-group">
+          <label class="form-label" id="edit-upload-label">📎 إرفاق ملف جديد <span style="color:#999;font-weight:400">(اختياري)</span></label>
+          <div class="upload-zone" id="edit-upload-zone">
+            <input type="file" name="attached_file" id="edit-file-input"
+                   accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                   onchange="previewFile(this,'edit-file-preview')">
+            <div class="upload-icon">📁</div>
+            <div class="upload-text">اسحب الملف هنا أو <strong>انقر للاختيار</strong></div>
+            <div style="font-size:0.76rem;color:#aaa;margin-top:4px">PDF أو Word — حجم أقصى 10 ميجا</div>
+          </div>
+          <div id="edit-file-preview"></div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" onclick="closeModal('edit-modal')">إلغاء</button>
+      <button class="btn btn-blue" onclick="updateSaderat()">💾 تحديث</button>
+    </div>
+  </div>
+</div>
+
+<script src="/js/app.js"></script>
+<script>
+  Auth.require();
+  let allData = [];
+  let editingId = null;
+
+  // ── LOAD ──────────────────────────────────────────────
+  async function load() {
+    try { allData = await api('/saderat') || []; render(allData); }
+    catch { toast('خطأ في التحميل', 'error'); }
+  }
+
+  // ── RENDER ────────────────────────────────────────────
+  const statColors = { 'مُرسَل': 'b-green', 'في الانتظار': 'b-yellow', 'مُلغى': 'b-red' };
+
+  function fileExt(fp) {
+    if (!fp) return '';
+    return fp.toLowerCase().includes('.pdf') ? 'pdf' : 'word';
+  }
+
+  function fileBadge(r) {
+    if (!r.file_path) return '<span style="color:#ccc;font-size:.8rem">—</span>';
+    const ext  = fileExt(r.file_path);
+    const icon = ext === 'pdf' ? '📄' : '📝';
+    const label = ext === 'pdf' ? 'PDF' : 'Word';
+    return `<a href="${r.file_path}" target="_blank" class="file-badge ${ext}" title="تحميل الملف المرفق">${icon} ${label}</a>`;
+  }
+
+  function render(data) {
+    const tb = document.getElementById('table-body');
+    if (!data.length) {
+      tb.innerHTML = '<tr><td colspan="7"><div class="empty"><div class="empty-icon">📤</div><p>لا توجد صادرات بعد</p></div></td></tr>';
+      return;
+    }
+    tb.innerHTML = data.map(r => `
+      <tr>
+        <td><strong>${r.numero}</strong></td>
+        <td>${r.date}</td>
+        <td>${r.destinataire}</td>
+        <td>${r.objet}</td>
+        <td><span class="badge ${statColors[r.statut]||'b-blue'}">${r.statut}</span></td>
+        <td>${fileBadge(r)}</td>
+        <td style="white-space:nowrap">
+          <button class="btn btn-sm btn-outline" onclick="editSaderat(${r.id})" title="تعديل">✏️</button>
+          <button class="btn btn-sm btn-red"     onclick="exportDoc(${r.id},'pdf')"  title="تصدير PDF">📄 PDF</button>
+          <button class="btn btn-sm btn-blue"    onclick="exportDoc(${r.id},'word')" title="تصدير Word">📝 Word</button>
+          <button class="btn btn-sm btn-red"     onclick="deleteSaderat(${r.id})"   title="حذف">🗑️</button>
+        </td>
+      </tr>`).join('');
+  }
+
+  // ── FILE PREVIEW ─────────────────────────────────────
+  function previewFile(input, previewId) {
+    const preview = document.getElementById(previewId);
+    if (!input.files || !input.files[0]) { preview.innerHTML = ''; return; }
+    const file = input.files[0];
+    const ext  = file.name.toLowerCase().endsWith('.pdf') ? 'pdf' : 'word';
+    const icon = ext === 'pdf' ? '📄' : '📝';
+    const size = (file.size / 1024).toFixed(0) + ' KB';
+    preview.innerHTML = `
+      <div class="file-preview">
+        <span class="file-icon">${icon}</span>
+        <span class="file-name">${file.name}</span>
+        <span style="color:#999;font-size:.78rem">${size}</span>
+        <button type="button" class="remove-file" onclick="clearFile('${input.id}','${previewId}')">✕</button>
+      </div>`;
+  }
+
+  function clearFile(inputId, previewId) {
+    const inp = document.getElementById(inputId);
+    inp.value = '';
+    document.getElementById(previewId).innerHTML = '';
+  }
+
+  // Drag & drop highlight
+  document.querySelectorAll('.upload-zone').forEach(zone => {
+    zone.addEventListener('dragover',  e => { e.preventDefault(); zone.classList.add('dragover'); });
+    zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
+    zone.addEventListener('drop',      e => { e.preventDefault(); zone.classList.remove('dragover'); });
+  });
+
+  // ── SAVE (ADD) ────────────────────────────────────────
+  async function saveSaderat() {
+    const form = document.getElementById('add-form');
+    const fd   = new FormData(form);
+
+    // Validate required
+    if (!fd.get('numero') || !fd.get('date') || !fd.get('destinataire') || !fd.get('objet')) {
+      return toast('يرجى ملء الحقول الإلزامية', 'error');
+    }
+
+    try {
+      const res = await fetch('/api/saderat', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${Auth.getToken()}` },
+        body: fd   // FormData — no Content-Type header needed
+      });
+      const d = await res.json();
+      if (!res.ok) throw new Error(d.error || 'خطأ');
+      toast(d.message, 'success');
+      closeModal('add-modal');
+      form.reset();
+      document.getElementById('add-file-preview').innerHTML = '';
+      load();
+    } catch(e) { toast(e.message, 'error'); }
+  }
+
+  // ── EDIT ─────────────────────────────────────────────
+  async function editSaderat(id) {
+    try {
+      editingId = id;
+      const r   = await api('/saderat/' + id);
+      const form = document.getElementById('edit-form');
+
+      // Fill text fields
+      ['id','numero','date','destinataire','objet','contenu','statut'].forEach(k => {
+        const el = form.querySelector(`[name="${k}"]`);
+        if (el) el.value = r[k] || '';
+      });
+
+      // Show/hide existing file
+      const wrap = document.getElementById('edit-existing-file-wrap');
+      if (r.file_path) {
+        wrap.style.display = 'block';
+        const fname = r.file_path.split('/').pop();
+        const ext   = fileExt(r.file_path);
+        document.getElementById('edit-existing-file-icon').textContent = ext === 'pdf' ? '📄' : '📝';
+        document.getElementById('edit-existing-file-name').textContent = fname;
+        document.getElementById('edit-existing-file-link').href = r.file_path;
+      } else {
+        wrap.style.display = 'none';
+      }
+
+      // Clear new file input
+      clearFile('edit-file-input', 'edit-file-preview');
+      openModal('edit-modal');
+    } catch(e) { toast(e.message, 'error'); }
+  }
+
+  async function removeExistingFile() {
+    if (!editingId) return;
+    if (!confirm('حذف الملف المرفق؟')) return;
+    try {
+      await fetch(`/api/saderat/${editingId}/file`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${Auth.getToken()}` }
+      });
+      document.getElementById('edit-existing-file-wrap').style.display = 'none';
+      toast('تم حذف الملف', 'success');
+    } catch(e) { toast('خطأ في الحذف', 'error'); }
+  }
+
+  // ── UPDATE ────────────────────────────────────────────
+  async function updateSaderat() {
+    const form = document.getElementById('edit-form');
+    const fd   = new FormData(form);
+    const id   = fd.get('id');
+    fd.delete('id');
+
+    try {
+      const res = await fetch(`/api/saderat/${id}`, {
+        method: 'PUT',
+        headers: { Authorization: `Bearer ${Auth.getToken()}` },
+        body: fd
+      });
+      const d = await res.json();
+      if (!res.ok) throw new Error(d.error || 'خطأ');
+      toast(d.message, 'success');
+      closeModal('edit-modal');
+      load();
+    } catch(e) { toast(e.message, 'error'); }
+  }
+
+  // ── DELETE ────────────────────────────────────────────
+  async function deleteSaderat(id) {
+    if (!confirm('حذف هذا الصادر؟')) return;
+    try { await api('/saderat/' + id, { method: 'DELETE' }); toast('تم الحذف', 'success'); load(); }
+    catch(e) { toast(e.message, 'error'); }
+  }
+
+  // ── EXPORT PDF / WORD ─────────────────────────────────
+  async function exportDoc(id, fmt) {
+    const res  = await fetch(`/api/saderat/${id}/export/${fmt}`, { headers: { Authorization: `Bearer ${Auth.getToken()}` } });
+    const blob = await res.blob();
+    const a    = document.createElement('a');
+    a.href     = URL.createObjectURL(blob);
+    a.download = fmt === 'pdf' ? `saderat_${id}.pdf` : `saderat_${id}.docx`;
+    a.click();
+  }
+
+  // ── SEARCH / FILTER ───────────────────────────────────
+  const filterData = () => {
+    const q = document.getElementById('search').value.toLowerCase();
+    const s = document.getElementById('filter-statut').value;
+    render(allData.filter(r =>
+      (!q || r.numero.toLowerCase().includes(q) || r.destinataire.toLowerCase().includes(q) || r.objet.toLowerCase().includes(q)) &&
+      (!s || r.statut === s)
+    ));
+  };
+  document.getElementById('search').addEventListener('input', filterData);
+  document.getElementById('filter-statut').addEventListener('change', filterData);
+
+  load();
+</script>
+</body>
+</html>
